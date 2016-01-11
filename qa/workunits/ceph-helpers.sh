@@ -310,8 +310,8 @@ function run_mon() {
         --mon-data-avail-crit=1 \
         --paxos-propose-interval=0.1 \
         --osd-crush-chooseleaf-type=0 \
-        --erasure-code-dir=.libs \
-        --plugin-dir=.libs \
+        --erasure-code-dir=$CEPH_LIB \
+        --plugin-dir=$CEPH_LIB \
         --debug-mon 20 \
         --debug-ms 20 \
         --debug-paxos 20 \
@@ -544,9 +544,9 @@ function activate_osd() {
     ceph_args+=" --osd-scrub-load-threshold=2000"
     ceph_args+=" --osd-data=$osd_data"
     ceph_args+=" --chdir="
-    ceph_args+=" --erasure-code-dir=.libs"
-    ceph_args+=" --plugin-dir=.libs"
-    ceph_args+=" --osd-class-dir=.libs"
+    ceph_args+=" --erasure-code-dir=$CEPH_LIB"
+    ceph_args+=" --plugin-dir=$CEPH_LIB"
+    ceph_args+=" --osd-class-dir=$CEPH_LIB"
     ceph_args+=" --run-dir=$dir"
     ceph_args+=" --debug-osd=20"
     ceph_args+=" --log-file=$dir/\$name.log"
@@ -604,6 +604,7 @@ function wait_for_osd() {
 
     status=1
     for ((i=0; i < $TIMEOUT; i++)); do
+        echo $i
         if ! ceph osd dump | grep "osd.$id $state"; then
             sleep 1
         else
@@ -1315,6 +1316,7 @@ function main() {
     PS4='${BASH_SOURCE[0]}:$LINENO: ${FUNCNAME[0]}:  '
 
     export PATH=${CEPH_BUILD_VIRTUALENV}/ceph-disk-virtualenv/bin:${CEPH_BUILD_VIRTUALENV}/ceph-detect-init-virtualenv/bin:.:$PATH # make sure program from sources are prefered
+    #export PATH=$CEPH_ROOT/src/ceph-disk/virtualenv/bin:$CEPH_ROOT/src/ceph-detect-init/virtualenv/bin:.:$PATH # make sure program from sources are prefered
 
     export CEPH_CONF=/dev/null
     unset CEPH_ARGS
@@ -1337,6 +1339,7 @@ function run_tests() {
     PS4='${BASH_SOURCE[0]}:$LINENO: ${FUNCNAME[0]}:  '
 
     export PATH=${CEPH_BUILD_VIRTUALENV}/ceph-disk-virtualenv/bin:${CEPH_BUILD_VIRTUALENV}/ceph-detect-init-virtualenv/bin:.:$PATH # make sure program from sources are prefered
+    #export PATH=$CEPH_ROOT/src/ceph-disk/virtualenv/bin:$CEPH_ROOT/src/ceph-detect-init/virtualenv/bin:.:$PATH # make sure program from sources are prefered
 
     export CEPH_MON="127.0.0.1:7109" # git grep '\<7109\>' : there must be only one
     export CEPH_ARGS
